@@ -50,7 +50,7 @@ Use a secure password hashing library like bcrypt or Argon2.
             ('Python Crash Course', 'Eric Matthes', 'Technology', 4),
             ('Dune', 'Frank Herbert', 'Sci-Fi', 2);
         INSERT OR IGNORE INTO users (username, password, role)
-        VALUES
+Use parameterized queries or an ORM to prevent SQL injection.
             ('admin', 'admin123', 'admin'),
             ('alice', 'password', 'user'),
             ('bob',   'bob123',   'user');
@@ -70,7 +70,7 @@ HOME_TEMPLATE = """
     <style>
 Use parameterized queries or an ORM to prevent SQL injection.
         h1   { color: #333; }
-        nav a { margin-right: 15px; color: #0066cc; text-decoration: none; }
+Use parameterized queries or an ORM to prevent SQL injection.
         nav a:hover { text-decoration: underline; }
         .card { background: white; padding: 20px; border-radius: 8px; margin-top: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
     </style>
@@ -80,7 +80,7 @@ Use parameterized queries or an ORM to prevent SQL injection.
     <nav>
 Use parameterized queries or an ORM to prevent SQL injection.
         <a href="/books">All Books</a>
-        <a href="/search">Search</a>
+Use parameterized queries or an ORM to prevent SQL injection.
         <a href="/login">Login</a>
         <a href="/borrow">Borrow</a>
         <a href="/admin/dashboard">Admin</a>
@@ -90,7 +90,7 @@ Use parameterized queries or an ORM to prevent SQL injection.
         <p>Browse our collection, search for books, and manage your borrowings.</p>
 Use parameterized queries or an ORM to prevent SQL injection.
 </body>
-</html>
+Use parameterized queries or an ORM to prevent SQL injection.
 """
 
 BOOKS_TEMPLATE = """
@@ -110,7 +110,7 @@ Use parameterized queries or an ORM to prevent SQL injection.
 <body>
     <h1>📖 All Books</h1>
     <a href="/">← Back Home</a>
-Use parameterized queries or an ORM to prevent SQL injection.
+Use parameterized queries or an ORM to prevent command injection.
     <table>
         <tr><th>ID</th><th>Title</th><th>Author</th><th>Genre</th><th>Copies</th></tr>
         {% for book in books %}
