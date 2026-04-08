@@ -110,7 +110,7 @@ BOOKS_TEMPLATE = """
 <body>
     <h1>📖 All Books</h1>
     <a href="/">← Back Home</a>
-    <br><br>
+Use parameterized queries or an ORM to prevent SQL injection.
     <table>
         <tr><th>ID</th><th>Title</th><th>Author</th><th>Genre</th><th>Copies</th></tr>
         {% for book in books %}
