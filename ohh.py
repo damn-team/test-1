@@ -11,9 +11,9 @@ app = Flask(__name__)
 
 
 app.config['SECRET_KEY'] = "super-secret-key-12345"
+a = 2
 
-
-
+#bhai tera namm kya hai bc mc 
 def get_db_connection():
     conn = sqlite3.connect('library.db')   # relative path — fragile
     return conn
