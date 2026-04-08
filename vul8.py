@@ -205,41 +205,6 @@ def list_books():
     return render_template_string(BOOKS_TEMPLATE, books=books)
 
 
-
-@app.route('/search', methods=['GET'])
-def search_books():
-    title = request.args.get('title', '')
-    conn = get_db_connection()
-    cursor = conn.cursor()
-
-    # Vulnerable query — never do this
-    query = f"SELECT * FROM books WHERE title = '{title}'"
-    cursor.execute(query)
-
-    books = cursor.fetchall()
-    conn.close()
-
-    if books:
-     
-        result = "<br>".join(
-            f"<b>{b[1]}</b> by {b[2]} (Genre: {b[3]}, Copies: {b[4]})"
-            for b in books
-        )
-        search_result = f"Results for '<b>{title}</b>':<br>{result}"
-    else:
-        search_result = f"No books found for '{title}'."
-
-    return render_template_string(SEARCH_TEMPLATE, query=title, search_result=search_result)
-
-
-
-
-
-
-
-
-
-
 # ======================== STARTUP ========================
 
 if __name__ == "__main__":
