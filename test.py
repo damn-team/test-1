@@ -1,24 +1,4 @@
-"""
-==========================================================
-  LIBRARY MANAGEMENT SYSTEM — VULNERABLE VERSION
-  ⚠️  FOR AI-DRIVEN CODE REVIEW TESTING ONLY ⚠️
-  DO NOT DEPLOY IN PRODUCTION
-==========================================================
-Intentional vulnerabilities embedded for PR diff analysis:
-  [V1]  Hardcoded Secret Key
-  [V2]  Insecure Relative DB Path
-  [V3]  SQL Injection (Search, Delete, Borrow)
-  [V4]  Broken Access Control (No Auth on Admin Routes)
-  [V5]  Insecure Deserialization via pickle (RCE)
-  [V6]  Sensitive Information Exposure (/debug)
-  [V7]  Code Smell — Business Logic in Route Layer
-  [V8]  Debug Mode in Production (app.run)
-  [V9]  XSS via unescaped template rendering
-  [V10] Path Traversal on File Download
-  [V11] IDOR (Insecure Direct Object Reference) on User Profile
-  [V12] Missing Rate Limiting (Brute-force friendly)
-==========================================================
-"""
+
 
 import os
 import sqlite3
@@ -29,18 +9,11 @@ from flask import Flask, request, render_template_string, redirect, session, sen
 
 app = Flask(__name__)
 
-# ---------------------------------------------------------------
-# [V1] HARDCODED SECRET KEY — Never hardcode secrets in source.
-#      Attacker can forge Flask session cookies with this key.
-# ---------------------------------------------------------------
+
 app.config['SECRET_KEY'] = "super-secret-key-12345"
 
 
-# ---------------------------------------------------------------
-# [V2] INSECURE DB PATH — Relative path breaks when the working
-#      directory changes (e.g., running as a service). Also no
-#      WAL mode, no timeout, no row_factory set.
-# ---------------------------------------------------------------
+
 def get_db_connection():
     conn = sqlite3.connect('library.db')   # relative path — fragile
     return conn
@@ -86,7 +59,7 @@ def init_db():
     conn.close()
 
 
-# ======================== TEMPLATES ========================
+
 
 HOME_TEMPLATE = """
 <!DOCTYPE html>
@@ -154,7 +127,7 @@ BOOKS_TEMPLATE = """
 </html>
 """
 
-# [V9] XSS — `search_result` is injected directly via |safe, allowing stored/reflected XSS
+
 SEARCH_TEMPLATE = """
 <!DOCTYPE html>
 <html lang="en">
@@ -217,7 +190,7 @@ LOGIN_TEMPLATE = """
 """
 
 
-# ======================== ROUTES ========================
+
 
 @app.route('/')
 def home():
@@ -232,11 +205,7 @@ def list_books():
     return render_template_string(BOOKS_TEMPLATE, books=books)
 
 
-# ---------------------------------------------------------------
-# [V3] SQL INJECTION — User input directly interpolated into SQL.
-#      Payload: ' OR '1'='1  → dumps all rows.
-#      Payload: ' UNION SELECT username,password,3,4,5 FROM users--
-# ---------------------------------------------------------------
+
 @app.route('/search', methods=['GET'])
 def search_books():
     title = request.args.get('title', '')
@@ -251,7 +220,7 @@ def search_books():
     conn.close()
 
     if books:
-        # [V9] XSS: result piped through |safe in template
+     
         result = "<br>".join(
             f"<b>{b[1]}</b> by {b[2]} (Genre: {b[3]}, Copies: {b[4]})"
             for b in books
@@ -263,10 +232,7 @@ def search_books():
     return render_template_string(SEARCH_TEMPLATE, query=title, search_result=search_result)
 
 
-# ---------------------------------------------------------------
-# [V12] NO RATE LIMITING — Brute-force login is trivial.
-#       Passwords are stored in plaintext in the DB (see init_db).
-# ---------------------------------------------------------------
+
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     error = None
@@ -275,7 +241,7 @@ def login():
         password = request.form.get('password')
         conn = get_db_connection()
 
-        # [V3-b] SQL Injection also here
+       
         user = conn.execute(
             f"SELECT * FROM users WHERE username='{username}' AND password='{password}'"
         ).fetchone()
@@ -291,10 +257,7 @@ def login():
     return render_template_string(LOGIN_TEMPLATE, error=error)
 
 
-# ---------------------------------------------------------------
-# [V3-c] SQL Injection on Borrow route
-# [V7]   Business logic (due date calc, copy check) inlined in route
-# ---------------------------------------------------------------
+
 @app.route('/borrow', methods=['GET', 'POST'])
 def borrow_book():
     message = ""
@@ -325,11 +288,7 @@ def borrow_book():
     """
 
 
-# ---------------------------------------------------------------
-# [V4] BROKEN ACCESS CONTROL — No authentication or role check.
-#      Any anonymous user can POST to delete any book.
-# [V3-d] SQL Injection on delete as well.
-# ---------------------------------------------------------------
+
 @app.route('/admin/delete-book', methods=['GET', 'POST'])
 def delete_book():
     if request.method == 'POST':
@@ -350,12 +309,10 @@ def delete_book():
     """
 
 
-# ---------------------------------------------------------------
-# [V4-b] Admin Dashboard — No role or auth check whatsoever
-# ---------------------------------------------------------------
+
 @app.route('/admin/dashboard')
 def admin_dashboard():
-    # Should check: if session.get('role') != 'admin': abort(403)
+    
     conn = get_db_connection()
     books = conn.execute("SELECT * FROM books").fetchall()
     users = conn.execute("SELECT id, username, role FROM users").fetchall()
@@ -385,11 +342,7 @@ def admin_dashboard():
     """
 
 
-# ---------------------------------------------------------------
-# [V5] INSECURE DESERIALIZATION — Accepts base64-encoded pickle
-#      from untrusted user input. Allows full Remote Code Execution.
-#      e.g.: pickle.loads can execute os.system('calc.exe')
-# ---------------------------------------------------------------
+
 @app.route('/backup', methods=['POST'])
 def restore_backup():
     data = request.form.get('backup_data')
@@ -402,10 +355,7 @@ def restore_backup():
         return f"Error restoring backup: {str(e)}", 500
 
 
-# ---------------------------------------------------------------
-# [V6] SENSITIVE INFORMATION EXPOSURE — Dumps ALL environment
-#      variables (DB URLs, API keys, secrets) to any HTTP client.
-# ---------------------------------------------------------------
+
 @app.route('/debug')
 def debug_info():
     sys_info = {
@@ -416,10 +366,7 @@ def debug_info():
     return str(sys_info)
 
 
-# ---------------------------------------------------------------
-# [V10] PATH TRAVERSAL — `filename` param not sanitised.
-#       Attacker can request: /download?file=../../etc/passwd
-# ---------------------------------------------------------------
+
 @app.route('/download')
 def download_file():
     filename = request.args.get('file', '')
@@ -427,11 +374,6 @@ def download_file():
     filepath = os.path.join('uploads', filename)
     return send_file(filepath)
 
-
-# ---------------------------------------------------------------
-# [V11] IDOR — User profile fetched by raw user-supplied `id`.
-#       Attacker can enumerate any user's data by changing the id.
-# ---------------------------------------------------------------
 @app.route('/profile')
 def user_profile():
     user_id = request.args.get('id')     # No session check
@@ -446,10 +388,6 @@ def user_profile():
     return "User not found.", 404
 
 
-# ---------------------------------------------------------------
-# [V7-b] CODE SMELL + COMMAND INJECTION — os.popen / subprocess
-#         with user-supplied input is never safe.
-# ---------------------------------------------------------------
 @app.route('/report')
 def generate_report():
     fmt = request.args.get('format', 'txt')
@@ -465,7 +403,5 @@ def generate_report():
 
 if __name__ == "__main__":
     init_db()
-    # [V8] debug=True exposes Werkzeug interactive debugger (allows
-    #      arbitrary Python execution). host='0.0.0.0' exposes to
-    #      all network interfaces — dangerous on public machines.
+
     app.run(host='0.0.0.0', port=5000, debug=True)
