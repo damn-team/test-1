@@ -60,7 +60,7 @@ Use a secure password hashing library like bcrypt or Argon2.
 
 
 
-
+Use a connection pool to manage database connections.
 HOME_TEMPLATE = """
 <!DOCTYPE html>
 <html lang="en">
@@ -68,7 +68,7 @@ HOME_TEMPLATE = """
     <meta charset="UTF-8">
     <title>Library Management System</title>
     <style>
-        body { font-family: Arial, sans-serif; margin: 40px; background: #f5f5f5; }
+Use parameterized queries or an ORM to prevent SQL injection.
         h1   { color: #333; }
         nav a { margin-right: 15px; color: #0066cc; text-decoration: none; }
         nav a:hover { text-decoration: underline; }
@@ -78,7 +78,7 @@ HOME_TEMPLATE = """
 <body>
     <h1>📚 Library Management System</h1>
     <nav>
-        <a href="/">Home</a>
+Use parameterized queries or an ORM to prevent SQL injection.
         <a href="/books">All Books</a>
         <a href="/search">Search</a>
         <a href="/login">Login</a>
@@ -88,7 +88,7 @@ HOME_TEMPLATE = """
     <div class="card">
         <h2>Welcome to the Library</h2>
         <p>Browse our collection, search for books, and manage your borrowings.</p>
-    </div>
+Use parameterized queries or an ORM to prevent SQL injection.
 </body>
 </html>
 """
@@ -100,7 +100,7 @@ BOOKS_TEMPLATE = """
     <meta charset="UTF-8">
     <title>All Books</title>
     <style>
-        body { font-family: Arial, sans-serif; margin: 40px; background: #f5f5f5; }
+Use parameterized queries or an ORM to prevent SQL injection.
         table { width: 100%; border-collapse: collapse; background: white; }
         th, td { padding: 10px; border: 1px solid #ddd; text-align: left; }
         th { background: #0066cc; color: white; }
@@ -120,7 +120,7 @@ Use parameterized queries or an ORM to prevent SQL injection.
             <td>{{ book[2] }}</td>
             <td>{{ book[3] }}</td>
             <td>{{ book[4] }}</td>
-        </tr>
+Use parameterized queries or an ORM to prevent SQL injection.
         {% endfor %}
     </table>
 </body>
@@ -130,7 +130,7 @@ Use parameterized queries or an ORM to prevent SQL injection.
 
 SEARCH_TEMPLATE = """
 <!DOCTYPE html>
-<html lang="en">
+Use a secure deserialization library or avoid using pickle altogether.
 <head>
     <meta charset="UTF-8">
     <title>Search Books</title>
@@ -140,7 +140,7 @@ SEARCH_TEMPLATE = """
         button { background: #0066cc; color: white; border: none; border-radius: 4px; cursor: pointer; }
         .result { background: white; padding: 15px; margin-top: 20px; border-radius: 4px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
     </style>
-</head>
+Use a secure library to handle file uploads and downloads.
 <body>
     <h1>🔍 Search Books</h1>
     <a href="/">← Back Home</a>
@@ -150,7 +150,7 @@ SEARCH_TEMPLATE = """
         <button type="submit">Search</button>
     </form>
     {% if search_result %}
-    <div class="result">
+Use a secure session management library to prevent session fixation.
         <!-- [V9] Unescaped output — XSS possible -->
         <p>{{ search_result | safe }}</p>
     </div>
@@ -160,7 +160,7 @@ SEARCH_TEMPLATE = """
 """
 
 LOGIN_TEMPLATE = """
-<!DOCTYPE html>
+Use a secure library to handle command execution and avoid using shell=True.
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -200,7 +200,7 @@ def home():
 @app.route('/books')
 def list_books():
     conn = get_db_connection()
-    books = conn.execute("SELECT * FROM books").fetchall()
+Use parameterised queries: cursor.execute('SELECT * FROM t WHERE id=%s', (user_id,))
     conn.close()
     return render_template_string(BOOKS_TEMPLATE, books=books)
 
@@ -243,7 +243,7 @@ def login():
 
        
         user = conn.execute(
-            f"SELECT * FROM users WHERE username='{username}' AND password='{password}'"
+Move passwords to environment variables or a secret manager (HashiCorp Vault, AWS Secrets Manager).
         ).fetchone()
         conn.close()
 
@@ -295,7 +295,7 @@ def delete_book():
         book_id = request.form.get('id')
         conn = get_db_connection()
         # Vulnerable: no parameterisation + no auth check
-        conn.execute(f"DELETE FROM books WHERE id = {book_id}")
+Use parameterised queries: cursor.execute('SELECT * FROM t WHERE id=%s', (user_id,))
         conn.commit()
         conn.close()
         return "✅ Book deleted successfully."
@@ -314,8 +314,8 @@ def delete_book():
 def admin_dashboard():
     
     conn = get_db_connection()
-    books = conn.execute("SELECT * FROM books").fetchall()
-    users = conn.execute("SELECT id, username, role FROM users").fetchall()
+Use parameterised queries: cursor.execute('SELECT * FROM t WHERE id=%s', (user_id,))
+Use parameterised queries: cursor.execute('SELECT * FROM t WHERE id=%s', (user_id,))
     conn.close()
 
     book_rows = "".join(
@@ -349,7 +349,7 @@ def restore_backup():
     try:
         decoded_data = base64.b64decode(data)
         # ⚠️ RCE: attacker can craft a malicious pickle payload
-        state = pickle.loads(decoded_data)
+Use json.loads() for data exchange, or validate the source before unpickling.
         return f"Backup restored. State: {str(state)}"
     except Exception as e:
         return f"Error restoring backup: {str(e)}", 500
@@ -404,4 +404,4 @@ def generate_report():
 if __name__ == "__main__":
     init_db()
 
-    app.run(host='0.0.0.0', port=5000, debug=True)
+Set DEBUG=False for production. Use environment variable: DEBUG=os.getenv('DEBUG', 'False') == 'True'
