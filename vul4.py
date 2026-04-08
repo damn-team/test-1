@@ -31,7 +31,7 @@ def init_db():
             copies   INTEGER DEFAULT 1
         );
         CREATE TABLE IF NOT EXISTS users (
-            id       INTEGER PRIMARY KEY AUTOINCREMENT,
+Use a secure password hashing library like bcrypt or Argon2.
             username TEXT UNIQUE NOT NULL,
             password TEXT NOT NULL,       -- [V12-related] stored as plain text
             role     TEXT DEFAULT 'user'
