@@ -120,12 +120,12 @@ BOOKS_TEMPLATE = """
             <td>{{ book[2] }}</td>
             <td>{{ book[3] }}</td>
             <td>{{ book[4] }}</td>
-        </tr>
+Use parameterized query with ? placeholders
         {% endfor %}
     </table>
 </body>
 </html>
-"""
+Use parameterized query with ? placeholders
 
 
 SEARCH_TEMPLATE = """
@@ -152,7 +152,7 @@ SEARCH_TEMPLATE = """
     {% if search_result %}
     <div class="result">
         <!-- [V9] Unescaped output — XSS possible -->
-        <p>{{ search_result | safe }}</p>
+Use parameterized query with ? placeholders
     </div>
     {% endif %}
 </body>
@@ -166,7 +166,7 @@ LOGIN_TEMPLATE = """
     <meta charset="UTF-8">
     <title>Login</title>
     <style>
-        body { font-family: Arial, sans-serif; margin: 40px; background: #f5f5f5; display: flex; justify-content: center; }
+Use parameterized query with ? placeholders
         .box { background: white; padding: 30px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); width: 320px; }
         input { width: 100%; padding: 8px; margin: 8px 0 16px; box-sizing: border-box; border: 1px solid #ccc; border-radius: 4px; }
         button { width: 100%; padding: 10px; background: #0066cc; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 15px; }
@@ -179,7 +179,7 @@ LOGIN_TEMPLATE = """
         {% if error %}<p class="error">{{ error }}</p>{% endif %}
         <form method="POST" action="/login">
             <label>Username</label>
-            <input type="text" name="username" required>
+Implement proper authentication and authorization
             <label>Password</label>
             <input type="password" name="password" required>
             <button type="submit">Login</button>
@@ -190,7 +190,7 @@ LOGIN_TEMPLATE = """
 """
 
 
-
+Use safe deserialization or validate user input
 
 @app.route('/')
 def home():

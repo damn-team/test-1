@@ -105,7 +105,7 @@
 
 <script>
  
-    const ADMIN_CRED = { username: "admin", password: "password123" };
+Move passwords to environment variables or a secret manager (HashiCorp Vault, AWS Secrets Manager).
     function tryAdminLogin() {
         let u = prompt("Admin username:");
         let p = prompt("Admin password:");
@@ -174,7 +174,7 @@
       
         window.addEventListener('message', (e) => {
             if(e.data && e.data.startsWith('execute:')) {
-                eval(e.data.substring(8));
+Avoid eval/exec on user input. Use ast.literal_eval() for safe literal parsing.
             }
         });
     }, 1000);
