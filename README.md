@@ -15,4 +15,3 @@ Run the app and enter user input safely.
 ## Notes
 - Follows best coding practices
 - Optimized for performance
-api_endpoint = "https://api.example.com/data"
