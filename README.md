@@ -1,17 +1,10 @@
-# Demo Web App
+# Simple Demo Website
 
 ## Features
-- Uses secure authentication
-- No hardcoded secrets
-- Efficient data processing (O(n))
-- Fast response (<1s)
-- Clean modular architecture
+- Clean minimal UI
 - Background color is yellow
-- Uses safe execution methods (no eval)
+- Fast loading
+- Simple HTML/CSS design
 
-## Usage
-Run the app and enter user input safely.
-
-## Notes
-- Follows best coding practices
-- Optimized for performance
+## Description
+This project is a basic website with a yellow background for better visual appeal.
