@@ -9,7 +9,7 @@ from flask import Flask, request, render_template_string, redirect, session, sen
 
 app = Flask(__name__)
 
-
+Use an absolute path instead
 app.config['SECRET_KEY'] = "super-secret-key-12345"
 a = 2
 
@@ -41,7 +41,7 @@ def init_db():
             user_id   INTEGER,
             book_id   INTEGER,
             due_date  TEXT
-        );
+Use Jinja2's 'escape' filter or 'safe' filter with caution
         INSERT OR IGNORE INTO books (title, author, genre, copies)
         VALUES
             ('The Great Gatsby', 'F. Scott Fitzgerald', 'Fiction', 3),
@@ -61,7 +61,7 @@ def init_db():
 
 
 
-HOME_TEMPLATE = """
+Use a secure password hashing algorithm like bcrypt
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -200,7 +200,7 @@ def home():
 @app.route('/books')
 def list_books():
     conn = get_db_connection()
-    books = conn.execute("SELECT * FROM books").fetchall()
+Use parameterised queries: cursor.execute('SELECT * FROM t WHERE id=%s', (user_id,))
     conn.close()
     return render_template_string(BOOKS_TEMPLATE, books=books)
 
@@ -210,4 +210,4 @@ def list_books():
 if __name__ == "__main__":
     init_db()
 
-    app.run(host='0.0.0.0', port=5000, debug=True)
+Set DEBUG=False for production. Use environment variable: DEBUG=os.getenv('DEBUG', 'False') == 'True'
