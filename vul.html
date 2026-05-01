@@ -1,0 +1,164 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NOVA Market — Premium Shopping</title>
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@800&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0d0d0f; --surface: #16161a; --accent: #7c5cfc;
+            --text: #f0f0f5; --text2: #9090a8; --border: rgba(255,255,255,0.07);
+        }
+        body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); margin: 0; overflow-x: hidden; }
+        
+        /* Professional Header */
+        header { 
+            background: rgba(13,13,15,0.95); backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border); padding: 0 5%; 
+            display: flex; align-items:center; justify-content: space-between; height: 70px; position: sticky; top:0; z-index:100;
+        }
+        .logo { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.4rem; color: var(--text); text-decoration: none; }
+        .logo span { color: var(--accent); }
+
+        .search-wrap { flex: 1; max-width: 500px; margin: 0 20px; position: relative; }
+        .search-input { 
+            width: 100%; padding: 12px 20px; background: var(--surface); 
+            border: 1px solid var(--border); border-radius: 50px; color: white; outline: none;
+        }
+
+        /* Layout */
+        .container { display: flex; padding: 20px 5%; gap: 30px; }
+        aside { width: 240px; flex-shrink: 0; }
+        .cat-item { 
+            padding: 12px; margin-bottom: 5px; cursor: pointer; border-radius: 8px; 
+            transition: 0.3s; color: var(--text2);
+        }
+        .cat-item:hover, .cat-item.active { background: var(--surface); color: var(--accent); }
+
+        /* Product Grid */
+        .main { flex: 1; }
+        #vuln-display-area { margin-bottom: 20px; padding: 15px; background: rgba(124, 92, 252, 0.1); border-radius: 10px; border-left: 4px solid var(--accent); }
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 20px; }
+        .card { background: var(--surface); padding: 15px; border-radius: 15px; border: 1px solid var(--border); text-align: center; }
+        .card .emoji { font-size: 3rem; margin-bottom: 10px; display: block; }
+        .card h4 { margin: 10px 0; font-size: 0.9rem; }
+        .price { color: var(--accent); font-weight: 700; font-size: 1.1rem; }
+        .btn { 
+            background: var(--accent); border: none; color: white; padding: 8px 15px; 
+            border-radius: 5px; margin-top: 10px; cursor: pointer; width: 100%; 
+        }
+
+        /* Modal */
+        .modal { 
+            position: fixed; inset: 0; background: rgba(0,0,0,0.8); 
+            display: none; align-items: center; justify-content: center; z-index: 1000; 
+        }
+        .modal-content { background: var(--surface); padding: 40px; border-radius: 20px; width: 350px; }
+        input { width: 100%; padding: 10px; margin: 10px 0; background: #26262e; border: 1px solid var(--border); color: white; border-radius: 5px; }
+    </style>
+</head>
+<body>
+
+<header>
+    <a href="#" class="logo">NOVA<span>MARKET</span></a>
+    <div class="search-wrap">
+        <input type="text" id="searchInput" class="search-input" placeholder="Search 180+ items..." onkeydown="if(event.key==='Enter')triggerSearch()">
+    </div>
+    <div id="user-greeting" style="font-weight: 500;">
+        <button class="btn" onclick="showLogin()" style="width: auto;">Admin Sign In</button>
+    </div>
+</header>
+
+<div class="container">
+    <aside id="sidebar">
+        <h3 style="margin-bottom: 20px;">Categories</h3>
+        <div class="cat-item active">All Products</div>
+        <div class="cat-item">Electronics</div>
+        <div class="cat-item">Clothing</div>
+        <div class="cat-item">Home & Kitchen</div>
+        <div class="cat-item">Beauty</div>
+        <div class="cat-item">Toys</div>
+        <div class="cat-item">Sports</div>
+    </aside>
+
+    <main class="main">
+        <!-- CRITICAL VULNERABILITY: This div displays raw HTML from input -->
+        <div id="vuln-display-area">Showing all 180 premium products.</div>
+        
+        <div class="grid" id="productGrid"></div>
+    </main>
+</div>
+
+<!-- Login Modal -->
+<div class="modal" id="loginModal">
+    <div class="modal-content">
+        <h2>Login</h2>
+        <p style="color: var(--text2); font-size: 0.8rem;">Demo: admin / 12345678</p>
+        <input type="text" id="userInp" placeholder="Username">
+        <input type="password" id="passInp" placeholder="Password">
+        <button class="btn" onclick="handleLogin()">Sign In</button>
+        <button class="btn" style="background: transparent;" onclick="document.getElementById('loginModal').style.display='none'">Cancel</button>
+    </div>
+</div>
+
+<script>
+    const categories = ['Electronics', 'Clothing', 'Home', 'Beauty', 'Toys', 'Sports'];
+    const emojis = ['📱', '👕', '🍳', '💄', '🧸', '⚽'];
+    let products = [];
+
+    // Generate 180 items
+    for(let i = 0; i < 180; i++) {
+        let catIndex = i % 6;
+        products.push({
+            name: `${categories[catIndex]} Pro Item #${i+1}`,
+            cat: categories[catIndex],
+            emoji: emojis[catIndex],
+            price: (Math.random() * 200 + 10).toFixed(2)
+        });
+    }
+
+    function renderProducts(list) {
+        const grid = document.getElementById('productGrid');
+        grid.innerHTML = list.map(p => `
+            <div class="card">
+                <span class="emoji">${p.emoji}</span>
+                <h4>${p.name}</h4>
+                <div class="price">$${p.price}</div>
+                <button class="btn">Add to Cart</button>
+            </div>
+        `).join('');
+    }
+
+    // VULNERABLE SEARCH FUNCTION
+    function triggerSearch() {
+        const query = document.getElementById('searchInput').value;
+        const display = document.getElementById('vuln-display-area');
+        
+        // VULNERABILITY: Injecting query directly without sanitization
+        display.innerHTML = "Results for: <b>" + query + "</b>"; 
+        
+        const filtered = products.filter(p => p.name.toLowerCase().includes(query.toLowerCase()));
+        renderProducts(filtered);
+    }
+
+    // VULNERABLE LOGIN GREETING
+    function showLogin() { document.getElementById('loginModal').style.display = 'flex'; }
+
+    function handleLogin() {
+        const user = document.getElementById('userInp').value;
+        const pass = document.getElementById('passInp').value;
+
+        if(user === "admin" && pass === "12345678") {
+            document.getElementById('loginModal').style.display = 'none';
+            // VULNERABILITY: Greeting the user with their raw input name
+            document.getElementById('user-greeting').innerHTML = "Welcome, " + user + "!";
+        } else {
+            alert("Wrong credentials");
+        }
+    }
+
+    renderProducts(products);
+</script>
+</body>
+</html>
