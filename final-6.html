@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>KLE Student Portal</title>
+
+    <!-- ❌ PERFORMANCE ISSUE: Blocking script -->
+    <script>
+        for (let i = 0; i < 1e8; i++) {} // UI freeze
+    </script>
+
+    <!-- ❌ INLINE CSS (bad practice) -->
+    <style>
+        body { font-family: Arial; margin: 0; }
+        header { background: #222; color: white; padding: 15px; }
+        .container { padding: 20px; }
+        input { padding: 8px; }
+        button { padding: 8px; cursor: pointer; }
+        .card { margin-top: 20px; padding: 15px; background: #f2f2f2; }
+    </style>
+
+    <!-- ❌ SECURITY ISSUE: Hardcoded secret -->
+    <script>
+        const SECRET_TOKEN = "SUPER_SECRET_123";
+    </script>
+
+</head>
+
+<body>
+
+<header>
+    <h2>KLE Student Portal</h2>
+</header>
+
+<div class="container">
+
+    <h3>Search Students</h3>
+
+    <!-- ❌ CODE QUALITY: Inline handler -->
+    <input type="text" id="searchBox" placeholder="Enter name">
+    <button onclick="search()">Search</button>
+
+    <button onclick="spam()">Load More</button>
+
+    <div id="result" class="card"></div>
+
+</div>
+
+<script>
+
+    // ❌ GLOBAL VARIABLES (bad practice)
+    var students = [];
+    var temp = [];
+
+    // ❌ BUG: Undefined variable usage possible
+    function buggyFunction() {
+        console.log(nonExistentVar); // will crash
+    }
+
+    // ❌ PERFORMANCE ISSUE: DOM spam
+    function spam() {
+        for (let i = 0; i < 500; i++) {
+            document.body.innerHTML += "<p>Loading " + i + "</p>";
+        }
+    }
+
+    // ❌ SECURITY: REAL XSS VULNERABILITY
+    function search() {
+        const input = document.getElementById("searchBox").value;
+
+        // 🚨 Vulnerable line
+        document.getElementById("result").innerHTML =
+            "<h4>Results for: " + input + "</h4>";
+    }
+
+    // ❌ BAD ERROR HANDLING
+    function fetchData() {
+        fetch("https://jsonplaceholder.typicode.com/posts")
+            .then(res => res.json())
+            .then(data => {
+                console.log(data);
+            });
+        // no catch()
+    }
+
+    fetchData();
+
+    // ❌ MEMORY LEAK STYLE PATTERN
+    setInterval(() => {
+        students.push(new Array(1000).fill("data"));
+    }, 1000);
+
+</script>
+
+<!-- ❌ ARCHITECTURE / REPO ISSUES (Simulated)
+    - No separation of concerns (HTML + CSS + JS in one file)
+    - No modular components
+    - No services layer
+    - No environment config
+    - No input validation layer
+    - No logging/monitoring system
+-->
+
+<footer class="container">
+    <p>© 2026 KLE Hackathon</p>
+</footer>
+
+</body>
+</html>

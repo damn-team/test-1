@@ -1,0 +1,857 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NOVA Market — Premium Shopping</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0d0d0f;
+  --surface: #16161a;
+  --surface2: #1e1e24;
+  --surface3: #26262e;
+  --border: rgba(255,255,255,0.07);
+  --border2: rgba(255,255,255,0.12);
+  --accent: #7c5cfc;
+  --accent2: #a78bfa;
+  --accent-glow: rgba(124,92,252,0.25);
+  --green: #22d3a5;
+  --amber: #f59e0b;
+  --red: #ef4444;
+  --text: #f0f0f5;
+  --text2: #9090a8;
+  --text3: #606075;
+  --radius: 14px;
+  --radius-sm: 8px;
+  --radius-full: 999px;
+  --trans: 0.22s cubic-bezier(0.4,0,0.2,1);
+}
+
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;line-height:1.5;overflow-x:hidden}
+
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar{width:6px}
+::-webkit-scrollbar-track{background:var(--surface)}
+::-webkit-scrollbar-thumb{background:var(--surface3);border-radius:3px}
+
+/* ── TOP BAR ── */
+.topbar{background:var(--accent);padding:8px 5%;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;font-size:.78rem;font-weight:600;letter-spacing:.5px}
+.topbar a{color:rgba(255,255,255,0.85);text-decoration:none;transition:color var(--trans)}
+.topbar a:hover{color:#fff}
+.topbar-promo{display:flex;align-items:center;gap:6px;color:#fff}
+.pulse-dot{width:7px;height:7px;background:#fff;border-radius:50%;animation:pulse 1.8s ease infinite}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(1.3)}}
+
+/* ── HEADER ── */
+.header{background:rgba(13,13,15,0.92);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border-bottom:1px solid var(--border);padding:0 5%;display:flex;align-items:center;justify-content:space-between;height:68px;position:sticky;top:0;z-index:200;gap:20px}
+.logo{display:flex;align-items:center;gap:10px;cursor:pointer;text-decoration:none;flex-shrink:0}
+.logo-mark{width:38px;height:38px;background:var(--accent);border-radius:10px;display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-weight:800;font-size:1.1rem;color:#fff;letter-spacing:-1px}
+.logo-name{font-family:'Syne',sans-serif;font-weight:800;font-size:1.2rem;color:var(--text);letter-spacing:-0.5px}
+.logo-name span{color:var(--accent2)}
+
+/* Search */
+.search-wrap{flex:1;max-width:480px;position:relative}
+.search-input{width:100%;padding:10px 44px 10px 16px;background:var(--surface2);border:1px solid var(--border2);border-radius:var(--radius-full);font-size:.9rem;color:var(--text);font-family:'DM Sans',sans-serif;outline:none;transition:var(--trans)}
+.search-input::placeholder{color:var(--text3)}
+.search-input:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-glow)}
+.search-icon{position:absolute;right:14px;top:50%;transform:translateY(-50%);color:var(--text3);pointer-events:none;font-size:1rem}
+
+/* Header actions */
+.header-actions{display:flex;align-items:center;gap:6px;flex-shrink:0}
+.icon-btn{background:none;border:1px solid transparent;width:40px;height:40px;border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text2);font-size:1.1rem;transition:var(--trans);position:relative}
+.icon-btn:hover{background:var(--surface2);border-color:var(--border2);color:var(--text)}
+.cart-badge{position:absolute;top:4px;right:4px;background:var(--red);color:#fff;font-size:.6rem;font-weight:700;width:16px;height:16px;border-radius:50%;display:flex;align-items:center;justify-content:center}
+.login-btn{background:var(--accent);color:#fff;border:none;padding:9px 18px;border-radius:var(--radius-sm);font-size:.85rem;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;transition:var(--trans);white-space:nowrap}
+.login-btn:hover{background:#6a4de8;transform:translateY(-1px);box-shadow:0 4px 16px var(--accent-glow)}
+
+/* ── LAYOUT ── */
+.layout{display:flex;gap:0;min-height:calc(100vh - 68px)}
+
+/* ── SIDEBAR ── */
+.sidebar{width:230px;min-width:230px;background:var(--surface);border-right:1px solid var(--border);padding:24px 0;position:sticky;top:68px;height:calc(100vh - 68px);overflow-y:auto}
+.sidebar-section{margin-bottom:8px}
+.sidebar-label{font-size:.7rem;font-weight:600;letter-spacing:1.5px;color:var(--text3);text-transform:uppercase;padding:0 20px 8px}
+.cat-item{display:flex;align-items:center;gap:10px;padding:10px 20px;cursor:pointer;transition:var(--trans);color:var(--text2);font-size:.88rem;font-weight:500;border-left:2px solid transparent;position:relative}
+.cat-item:hover{color:var(--text);background:var(--surface2)}
+.cat-item.active{color:var(--accent2);border-left-color:var(--accent);background:rgba(124,92,252,0.08)}
+.cat-icon{font-size:1.1rem;width:22px;text-align:center;flex-shrink:0}
+.cat-count{margin-left:auto;font-size:.72rem;background:var(--surface3);color:var(--text3);padding:2px 7px;border-radius:var(--radius-full)}
+.cat-item.active .cat-count{background:rgba(124,92,252,0.2);color:var(--accent2)}
+.sidebar-divider{height:1px;background:var(--border);margin:12px 20px}
+
+/* Price filter */
+.price-section{padding:0 20px 16px}
+.price-section h4{font-size:.78rem;font-weight:600;color:var(--text2);margin-bottom:10px;text-transform:uppercase;letter-spacing:1px}
+.price-range{display:flex;gap:8px}
+.price-inp{flex:1;background:var(--surface2);border:1px solid var(--border2);border-radius:var(--radius-sm);padding:7px 10px;color:var(--text);font-size:.82rem;font-family:'DM Sans',sans-serif;outline:none;width:100%;transition:var(--trans)}
+.price-inp:focus{border-color:var(--accent)}
+.apply-btn{width:100%;margin-top:10px;background:var(--accent);color:#fff;border:none;border-radius:var(--radius-sm);padding:9px;font-size:.83rem;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;transition:var(--trans)}
+.apply-btn:hover{background:#6a4de8}
+
+/* ── MAIN ── */
+.main{flex:1;padding:24px 28px;min-width:0}
+
+/* Hero banner */
+.hero{background:linear-gradient(135deg,#1a1025 0%,#0d1a2e 100%);border:1px solid var(--border2);border-radius:var(--radius);padding:32px 36px;margin-bottom:24px;display:flex;justify-content:space-between;align-items:center;gap:20px;overflow:hidden;position:relative}
+.hero::before{content:'';position:absolute;right:-60px;top:-60px;width:280px;height:280px;background:radial-gradient(circle,rgba(124,92,252,0.18) 0%,transparent 70%);pointer-events:none}
+.hero::after{content:'';position:absolute;left:40%;bottom:-40px;width:200px;height:200px;background:radial-gradient(circle,rgba(34,211,165,0.1) 0%,transparent 70%);pointer-events:none}
+.hero-text h1{font-family:'Syne',sans-serif;font-size:1.8rem;font-weight:800;line-height:1.2;margin-bottom:8px}
+.hero-text h1 span{color:var(--accent2)}
+.hero-text p{color:var(--text2);font-size:.9rem}
+.hero-code{background:rgba(124,92,252,0.15);border:1px solid rgba(124,92,252,0.3);color:var(--accent2);padding:4px 12px;border-radius:var(--radius-sm);font-weight:700;font-size:.9rem;display:inline-flex;align-items:center;gap:6px;margin-top:10px}
+.hero-badges{display:flex;flex-direction:column;gap:10px;align-items:flex-end;flex-shrink:0}
+.hero-badge{background:rgba(255,255,255,0.04);border:1px solid var(--border2);border-radius:var(--radius-sm);padding:12px 18px;text-align:center}
+.hero-badge .num{font-family:'Syne',sans-serif;font-size:1.6rem;font-weight:800;color:var(--green)}
+.hero-badge .lbl{font-size:.72rem;color:var(--text3);letter-spacing:.5px;text-transform:uppercase}
+
+/* Toolbar */
+.toolbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap;gap:12px}
+.result-text{font-size:.88rem;color:var(--text2)}
+.result-text strong{color:var(--text)}
+.sort-group{display:flex;gap:8px;flex-wrap:wrap}
+.sort-chip{background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-full);padding:6px 14px;font-size:.8rem;color:var(--text2);cursor:pointer;transition:var(--trans);font-family:'DM Sans',sans-serif;font-weight:500}
+.sort-chip:hover{border-color:var(--border2);color:var(--text)}
+.sort-chip.active{background:rgba(124,92,252,0.15);border-color:var(--accent);color:var(--accent2)}
+
+/* Product grid */
+.product-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:16px}
+.product-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;cursor:pointer;transition:var(--trans);display:flex;flex-direction:column;position:relative}
+.product-card:hover{border-color:var(--border2);transform:translateY(-4px);box-shadow:0 12px 32px rgba(0,0,0,0.4)}
+.card-img{height:140px;display:flex;align-items:center;justify-content:center;font-size:3rem;position:relative;overflow:hidden}
+.card-badges{position:absolute;top:8px;left:8px;display:flex;flex-direction:column;gap:4px}
+.badge-sale{background:var(--red);color:#fff;font-size:.65rem;font-weight:700;padding:3px 8px;border-radius:var(--radius-full);letter-spacing:.5px}
+.badge-new{background:var(--green);color:#000;font-size:.65rem;font-weight:700;padding:3px 8px;border-radius:var(--radius-full);letter-spacing:.5px}
+.card-body{padding:12px 14px;flex:1;display:flex;flex-direction:column;gap:5px}
+.card-brand{font-size:.72rem;color:var(--text3);font-weight:500;text-transform:uppercase;letter-spacing:.5px}
+.card-name{font-size:.88rem;font-weight:600;color:var(--text);line-height:1.3;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.card-rating{font-size:.78rem;color:var(--text3);display:flex;align-items:center;gap:4px}
+.stars{color:var(--amber);font-size:.7rem;letter-spacing:1px}
+.card-price{display:flex;align-items:center;gap:8px;margin-top:auto;padding-top:4px}
+.price-now{font-family:'Syne',sans-serif;font-size:1.1rem;font-weight:700;color:var(--text)}
+.price-old{font-size:.78rem;color:var(--text3);text-decoration:line-through}
+.card-actions{padding:0 14px 14px;display:flex;gap:8px}
+.add-btn{flex:1;background:var(--accent);color:#fff;border:none;border-radius:var(--radius-sm);padding:9px;font-size:.82rem;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;transition:var(--trans)}
+.add-btn:hover{background:#6a4de8;transform:translateY(-1px)}
+.wish-btn{background:var(--surface2);border:1px solid var(--border2);border-radius:var(--radius-sm);width:36px;height:36px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text3);transition:var(--trans);font-size:.9rem}
+.wish-btn:hover{color:#ef4444;border-color:#ef4444}
+.wish-btn.wished{color:#ef4444;border-color:#ef4444}
+
+/* empty state */
+.empty{grid-column:1/-1;text-align:center;padding:60px 20px;color:var(--text2)}
+.empty .e-icon{font-size:3rem;margin-bottom:12px}
+.empty h3{font-size:1.1rem;font-weight:600;color:var(--text);margin-bottom:6px}
+
+/* ── LOGIN MODAL ── */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:500;display:flex;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(6px)}
+.modal{background:var(--surface);border:1px solid var(--border2);border-radius:var(--radius);padding:32px;width:100%;max-width:380px;position:relative;animation:modalIn .25s ease}
+@keyframes modalIn{from{opacity:0;transform:translateY(-20px) scale(.97)}to{opacity:1;transform:none}}
+.modal-close{position:absolute;top:14px;right:14px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);width:30px;height:30px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text2);font-size:.9rem;transition:var(--trans)}
+.modal-close:hover{background:var(--surface3);color:var(--text)}
+.modal h2{font-family:'Syne',sans-serif;font-size:1.4rem;font-weight:800;margin-bottom:4px}
+.modal p{color:var(--text2);font-size:.85rem;margin-bottom:22px}
+.form-group{margin-bottom:14px}
+.form-group label{display:block;font-size:.8rem;font-weight:600;color:var(--text2);margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px}
+.form-group input{width:100%;padding:11px 14px;background:var(--surface2);border:1px solid var(--border2);border-radius:var(--radius-sm);color:var(--text);font-size:.92rem;font-family:'DM Sans',sans-serif;outline:none;transition:var(--trans)}
+.form-group input:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-glow)}
+.form-group input::placeholder{color:var(--text3)}
+.modal-btn{width:100%;padding:12px;background:var(--accent);color:#fff;border:none;border-radius:var(--radius-sm);font-size:.95rem;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;transition:var(--trans);margin-top:6px;letter-spacing:.3px}
+.modal-btn:hover{background:#6a4de8;transform:translateY(-1px);box-shadow:0 6px 20px var(--accent-glow)}
+.modal-hint{font-size:.73rem;color:var(--text3);text-align:center;margin-top:14px}
+.modal-divider{height:1px;background:var(--border);margin:18px 0}
+.modal-social{display:flex;gap:10px}
+.social-btn{flex:1;padding:10px;background:var(--surface2);border:1px solid var(--border2);border-radius:var(--radius-sm);color:var(--text2);font-size:.82rem;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;transition:var(--trans);text-align:center}
+.social-btn:hover{border-color:var(--border2);color:var(--text);background:var(--surface3)}
+
+/* ── TOAST ── */
+.toast-wrap{position:fixed;bottom:24px;right:24px;z-index:600;display:flex;flex-direction:column;gap:8px;pointer-events:none}
+.toast{background:var(--surface2);border:1px solid var(--border2);border-radius:var(--radius-sm);padding:12px 18px;font-size:.87rem;font-weight:500;color:var(--text);box-shadow:0 8px 24px rgba(0,0,0,0.4);animation:toastIn .3s ease;display:flex;align-items:center;gap:8px;max-width:300px}
+.toast.success{border-left:3px solid var(--green)}
+.toast.error{border-left:3px solid var(--red)}
+.toast.info{border-left:3px solid var(--accent)}
+@keyframes toastIn{from{opacity:0;transform:translateX(20px)}to{opacity:1;transform:none}}
+@keyframes toastOut{to{opacity:0;transform:translateX(20px)}}
+
+/* ── CART DRAWER ── */
+.cart-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:400;backdrop-filter:blur(4px)}
+.cart-drawer{position:fixed;right:0;top:0;bottom:0;width:340px;max-width:95vw;background:var(--surface);border-left:1px solid var(--border2);z-index:401;display:flex;flex-direction:column;animation:drawerIn .3s ease}
+@keyframes drawerIn{from{transform:translateX(100%)}to{transform:none}}
+.cart-header{padding:20px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
+.cart-header h3{font-family:'Syne',sans-serif;font-size:1.1rem;font-weight:700}
+.cart-items{flex:1;overflow-y:auto;padding:16px}
+.cart-empty{text-align:center;padding:40px 20px;color:var(--text2)}
+.cart-empty .ce-icon{font-size:2.5rem;margin-bottom:10px}
+.cart-item{display:flex;gap:12px;padding:12px 0;border-bottom:1px solid var(--border)}
+.ci-emoji{width:52px;height:52px;background:var(--surface2);border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;font-size:1.6rem;flex-shrink:0}
+.ci-info{flex:1;min-width:0}
+.ci-name{font-size:.85rem;font-weight:500;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ci-brand{font-size:.72rem;color:var(--text3)}
+.ci-price{font-size:.9rem;font-weight:700;color:var(--accent2);margin-top:4px}
+.ci-remove{background:none;border:none;color:var(--text3);cursor:pointer;font-size:1rem;padding:0;transition:var(--trans)}
+.ci-remove:hover{color:var(--red)}
+.cart-footer{padding:16px 20px;border-top:1px solid var(--border)}
+.cart-total{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+.ct-label{font-size:.85rem;color:var(--text2)}
+.ct-val{font-family:'Syne',sans-serif;font-size:1.3rem;font-weight:800;color:var(--text)}
+.checkout-btn{width:100%;padding:12px;background:var(--accent);color:#fff;border:none;border-radius:var(--radius-sm);font-size:.95rem;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;transition:var(--trans)}
+.checkout-btn:hover{background:#6a4de8}
+
+/* ── FOOTER ── */
+footer{background:var(--surface);border-top:1px solid var(--border);padding:20px 5%;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;font-size:.8rem;color:var(--text3)}
+footer a{color:var(--text3);text-decoration:none;transition:color var(--trans)}
+footer a:hover{color:var(--text2)}
+.footer-links{display:flex;gap:16px}
+
+/* ── RESPONSIVE ── */
+@media(max-width:900px){
+  .layout{flex-direction:column}
+  .sidebar{width:100%;min-width:0;height:auto;position:static;padding:12px 0;border-right:none;border-bottom:1px solid var(--border);display:flex;overflow-x:auto;overflow-y:hidden;gap:0}
+  .sidebar-section{display:flex;flex-direction:row;gap:4px;padding:0 12px;flex-shrink:0;margin-bottom:0}
+  .sidebar-label,.sidebar-divider,.price-section{display:none}
+  .cat-item{border-left:none;border-bottom:2px solid transparent;border-radius:var(--radius-full);padding:7px 12px;white-space:nowrap;font-size:.82rem}
+  .cat-item.active{border-bottom-color:var(--accent);border-radius:var(--radius-full)}
+  .cat-count{display:none}
+  .main{padding:16px}
+  .hero{padding:20px}
+  .hero-text h1{font-size:1.3rem}
+  .hero-badges{flex-direction:row}
+  .header{padding:0 3%;height:60px}
+  .logo-name{display:none}
+  .product-grid{grid-template-columns:repeat(auto-fill,minmax(155px,1fr));gap:12px}
+}
+@media(max-width:480px){
+  .topbar{display:none}
+  .product-grid{grid-template-columns:repeat(2,1fr);gap:10px}
+  .card-img{height:110px;font-size:2.4rem}
+  .hero-badges{display:none}
+  .sort-group{gap:5px}
+  .sort-chip{padding:5px 10px;font-size:.75rem}
+  .search-wrap{max-width:none}
+  .header-actions .login-btn{display:none}
+}
+</style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<div class="topbar">
+  <div class="topbar-promo">
+    <div class="pulse-dot"></div>
+    FLASH SALE — Up to 60% OFF on selected items!
+  </div>
+  <div style="display:flex;gap:16px">
+    <a href="#">Track Order</a>
+    <a href="#">Help Center</a>
+    <a href="#" onclick="showLogin();return false">Admin Portal</a>
+  </div>
+</div>
+
+<!-- HEADER -->
+<header class="header">
+  <a class="logo" onclick="resetAll();return false" href="#">
+    <div class="logo-mark">N</div>
+    <span class="logo-name">NOVA <span>Market</span></span>
+  </a>
+  <div class="search-wrap">
+    <input class="search-input" id="searchInput" type="text" placeholder="Search 180 products…" oninput="handleSearch()" onkeydown="if(event.key==='Enter')handleSearch()">
+    <span class="search-icon">⌕</span>
+  </div>
+  <div class="header-actions">
+    <button class="icon-btn" title="Wishlist" id="wishBtn" onclick="showWishlist()">♡ <span id="wishCount" style="font-size:.7rem;margin-left:2px">0</span></button>
+    <button class="icon-btn" title="Cart" onclick="openCart()">
+      🛒
+      <span class="cart-badge" id="cartBadge" style="display:none">0</span>
+    </button>
+    <button class="login-btn" onclick="showLogin()">Sign In</button>
+    <button class="icon-btn" onclick="showLogin()">👤</button>
+  </div>
+</header>
+
+<!-- LAYOUT -->
+<div class="layout">
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-section">
+      <div class="sidebar-label">Categories</div>
+      <div class="cat-item active" data-cat="all" onclick="setCategory('all',this)">
+        <span class="cat-icon">🏠</span> All <span class="cat-count">180</span>
+      </div>
+      <div class="cat-item" data-cat="Electronics" onclick="setCategory('Electronics',this)">
+        <span class="cat-icon">📱</span> Electronics <span class="cat-count">30</span>
+      </div>
+      <div class="cat-item" data-cat="Clothing" onclick="setCategory('Clothing',this)">
+        <span class="cat-icon">👕</span> Clothing <span class="cat-count">30</span>
+      </div>
+      <div class="cat-item" data-cat="Home" onclick="setCategory('Home',this)">
+        <span class="cat-icon">🏠</span> Home & Kitchen <span class="cat-count">30</span>
+      </div>
+      <div class="cat-item" data-cat="Beauty" onclick="setCategory('Beauty',this)">
+        <span class="cat-icon">💄</span> Beauty <span class="cat-count">30</span>
+      </div>
+      <div class="cat-item" data-cat="Toys" onclick="setCategory('Toys',this)">
+        <span class="cat-icon">🧸</span> Toys & Games <span class="cat-count">30</span>
+      </div>
+      <div class="cat-item" data-cat="Sports" onclick="setCategory('Sports',this)">
+        <span class="cat-icon">⚽</span> Sports & Fitness <span class="cat-count">30</span>
+      </div>
+    </div>
+    <div class="sidebar-divider"></div>
+    <div class="sidebar-section" style="padding:0 0 8px;width:100%">
+      <div class="sidebar-label">Price Range</div>
+      <div class="price-section">
+        <div class="price-range">
+          <input class="price-inp" id="minPrice" type="number" placeholder="Min $" min="0">
+          <input class="price-inp" id="maxPrice" type="number" placeholder="Max $" min="0">
+        </div>
+        <button class="apply-btn" onclick="applyPrice()">Apply Filter</button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main">
+    <!-- Hero -->
+    <div class="hero">
+      <div class="hero-text">
+        <h1>Mega Sale is <span>Live Now</span></h1>
+        <p>Shop from 180+ products across 6 categories with unbeatable prices.</p>
+        <div class="hero-code">🏷️ WELCOME30 — 30% off your first order</div>
+      </div>
+      <div class="hero-badges">
+        <div class="hero-badge">
+          <div class="num">180+</div>
+          <div class="lbl">Products</div>
+        </div>
+        <div class="hero-badge">
+          <div class="num" style="color:var(--accent2)">60%</div>
+          <div class="lbl">Max Off</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Toolbar -->
+    <div class="toolbar">
+      <span class="result-text"><strong id="resultNum">180</strong> products found</span>
+      <div class="sort-group">
+        <button class="sort-chip active" id="sort-popular" onclick="setSort('popular',this)">🔥 Popular</button>
+        <button class="sort-chip" id="sort-low" onclick="setSort('low',this)">↑ Price</button>
+        <button class="sort-chip" id="sort-high" onclick="setSort('high',this)">↓ Price</button>
+        <button class="sort-chip" id="sort-rating" onclick="setSort('rating',this)">⭐ Top Rated</button>
+        <button class="sort-chip" id="sort-new" onclick="setSort('new',this)">✨ Newest</button>
+      </div>
+    </div>
+
+    <!-- Grid -->
+    <div class="product-grid" id="productGrid"></div>
+  </main>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <span>© 2025 NOVA Market — Hackathon Demo</span>
+  <div class="footer-links">
+    <a href="#">Privacy</a>
+    <a href="#">Terms</a>
+    <a href="#">Support</a>
+    <a href="#" onclick="showLogin();return false">Admin</a>
+  </div>
+</footer>
+
+<!-- TOAST CONTAINER -->
+<div class="toast-wrap" id="toastWrap"></div>
+
+<!-- LOGIN MODAL -->
+<div class="overlay" id="loginOverlay" style="display:none" onclick="if(event.target===this)closeLogin()">
+  <div class="modal">
+    <button class="modal-close" onclick="closeLogin()">✕</button>
+    <h2>Welcome back 👋</h2>
+    <p>Sign in to your NOVA Market account</p>
+    <div class="form-group">
+      <label>Username</label>
+      <input type="text" id="loginUser" placeholder="Enter username" autocomplete="username">
+    </div>
+    <div class="form-group">
+      <label>Password</label>
+      <input type="password" id="loginPass" placeholder="Enter password" onkeydown="if(event.key==='Enter')doLogin()">
+    </div>
+    <button class="modal-btn" onclick="doLogin()">Sign In →</button>
+    <div class="modal-divider"></div>
+    <div class="modal-social">
+      <button class="social-btn" onclick="showToast('Google login not available in demo','info')">G Continue with Google</button>
+      <button class="social-btn" onclick="showToast('GitHub login not available in demo','info')">⌥ GitHub</button>
+    </div>
+    <p class="modal-hint">Demo credentials: admin / 12345678</p>
+  </div>
+</div>
+
+<!-- CART DRAWER -->
+<div id="cartOverlay" style="display:none">
+  <div class="cart-overlay" onclick="closeCart()"></div>
+  <div class="cart-drawer">
+    <div class="cart-header">
+      <h3>Your Cart (<span id="cartItemCount">0</span>)</h3>
+      <button class="modal-close" style="position:static" onclick="closeCart()">✕</button>
+    </div>
+    <div class="cart-items" id="cartItems">
+      <div class="cart-empty"><div class="ce-icon">🛒</div><p>Your cart is empty</p></div>
+    </div>
+    <div class="cart-footer" id="cartFooter" style="display:none">
+      <div class="cart-total">
+        <span class="ct-label">Total</span>
+        <span class="ct-val" id="cartTotal">$0.00</span>
+      </div>
+      <button class="checkout-btn" onclick="showToast('Checkout coming soon!','info')">Checkout →</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ══════════════════════════════════════════
+// PRODUCT DATA
+// ══════════════════════════════════════════
+const CATEGORIES = [
+  {
+    id:'Electronics', icon:'📱',
+    bg:'#1a1f3a',
+    emojis:['📱','💻','🎧','⌚','🖥️','🎮','📷','🔌','💡','🖨️'],
+    brands:['TechPro','Sony','Samsung','Apple','Logitech','Anker','JBL','Bose','Razer','MSI'],
+    priceBase:20, priceRange:280,
+    items:[
+      'Wireless Bluetooth Earbuds Pro','Fast USB-C Charging Cable 2m','Portable Power Bank 20000mAh',
+      'Smart LED Desk Lamp','Mechanical Gaming Keyboard RGB','Ergonomic Wireless Mouse',
+      'Noise Cancelling Headphones','4K HDMI Cable Braided','Laptop Cooling Stand',
+      'Smart WiFi Plug Socket','Digital Alarm Clock','Phone Car Mount Holder',
+      'USB-C Hub Adapter 7-in-1','Bluetooth Speaker Waterproof','Webcam HD 1080p',
+      'Wireless Charging Pad 15W','Mini Projector Portable','Smart Watch Fitness Band',
+      'Tablet Stand Adjustable Aluminum','External SSD 1TB Portable','LED Ring Light 18"',
+      'Car Charger Dual USB 30W','Screen Cleaning Kit Pro','Cable Management Box',
+      'Wireless Presenter Clicker','USB Condenser Microphone','SD Card 256GB V30',
+      'Headphone Stand with USB Hub','Gaming Mouse Pad XXL','Surge Protector 8-Outlet'
+    ]
+  },
+  {
+    id:'Clothing', icon:'👕',
+    bg:'#1f1a2e',
+    emojis:['👕','👖','🧥','🧢','👗','👔','🧣','🧤','👟','🩳'],
+    brands:['UrbanWear','Zara','H&M','Uniqlo','Nike','Adidas','Levi\'s','GAP','Mango','Puma'],
+    priceBase:12, priceRange:100,
+    items:[
+      'Classic Cotton T-Shirt','Slim Fit Chino Pants','Hooded Zip-Up Sweatshirt',
+      'Formal Button-Down Shirt','Stretch Denim Jeans','Lightweight Windbreaker Jacket',
+      'V-Neck Merino Sweater','Cargo Shorts Cotton','Flannel Plaid Shirt',
+      'Athletic Jogger Pants','Polo Shirt Pique Cotton','Winter Puffer Vest',
+      'Linen Summer Shirt','Tapered Dress Trousers','Graphic Print Oversized Tee',
+      'Classic Denim Jacket','Yoga Leggings High Waist','Ribbed Turtleneck Knit',
+      'Board Shorts Quick Dry','Stretch Casual Blazer','Muscle Fit Tank Top',
+      'Fleece Pullover Half-Zip','Chino Shorts Slim Fit','Oversized Cozy Hoodie',
+      'Striped Long Sleeve Tee','Satin Bomber Jacket','Compression Performance Tights',
+      'Open-Front Cardigan','Packable Rain Jacket','Classic Crew Neck Sweatshirt'
+    ]
+  },
+  {
+    id:'Home', icon:'🏠',
+    bg:'#1a2a1f',
+    emojis:['🍳','🪴','☕','🕯️','🧹','🔪','🥘','🫖','🧊','🍽️'],
+    brands:['HomeEssentials','IKEA','KitchenAid','Cuisinart','OXO','Instant','Lodge','T-fal','Ninja','Breville'],
+    priceBase:10, priceRange:180,
+    items:[
+      'Non-Stick Frying Pan 28cm','Stainless Steel Knife Set 7pc','Robot Vacuum Cleaner Wi-Fi',
+      'Airtight Food Containers 10-Set','Memory Foam Pillow Pair','French Press Coffee Maker 1L',
+      'Bamboo Cutting Board Large','Electric Kettle 1.7L Glass','Microfiber Cleaning Cloths 12pk',
+      'Luxury Soy Wax Scented Candle','Digital Kitchen Scale','Drawer Organizer Set',
+      'Cast Iron Dutch Oven 5.5qt','Egyptian Cotton Towel Set 6pc','Smart Thermostat Wi-Fi',
+      'Wall-Mounted Spice Rack','Personal Smoothie Blender','Vacuum Storage Bags Large',
+      'Silicone Cooking Utensil Set','Portable Induction Cooktop','Bamboo Laundry Hamper',
+      'Glass Oil & Vinegar Dispenser','Professional Knife Sharpener','Digital Air Fryer 5.5L',
+      'Non-Adhesive Shelf Liner','Spin Mop and Bucket Set','Measuring Cups Stainless Set',
+      'Programmable Slow Cooker 6L','Expandable Dish Rack','Motion Sensor Trash Can 13gal'
+    ]
+  },
+  {
+    id:'Beauty', icon:'💄',
+    bg:'#2a1a28',
+    emojis:['💄','💅','🧴','🌸','✨','🪞','💋','🧖','🫧','🧼'],
+    brands:['GlowUp','L\'Oreal','The Ordinary','Neutrogena','CeraVe','NYX','Maybelline','Fenty','NARS','Olay'],
+    priceBase:6, priceRange:80,
+    items:[
+      'Vitamin C Brightening Serum 30ml','Hyaluronic Acid Moisturizer SPF','Retinol Renewal Night Cream',
+      'Broad Spectrum Sunscreen SPF 50+','Activated Charcoal Detox Mask','Advanced Eye Cream Anti-Aging',
+      'Tinted Lip Balm Set 6 Shades','Professional Makeup Brush Set 12pc','Micellar Cleansing Water 400ml',
+      'Argan Oil Hair Treatment','Natural Aluminum-Free Deodorant','Rose Quartz Face Roller',
+      'Skin-Perfecting BB Cream','Waterproof Precision Eyeliner','Nail Polish Collection 24 Colors',
+      'Volumizing Dry Shampoo','Coffee Body Scrub Exfoliating','Korean Sheet Mask Variety 10pk',
+      'Cleansing Balm Makeup Remover','Lash Growth Enhancing Serum','Shea Butter Hand Cream 100ml',
+      'Ionic Hair Straightening Brush','Setting Spray Matte Finish','Full Coverage Concealer Palette',
+      'Fizzing Bath Bombs Gift Set 12','Cuticle Repair Oil Pen','Exfoliating Foot Peel Mask',
+      'Illuminating Highlighter Stick','Rollerball Perfume Set 6pc','Mulberry Silk Pillowcase'
+    ]
+  },
+  {
+    id:'Toys', icon:'🧸',
+    bg:'#2a201a',
+    emojis:['🧸','🎲','🚗','🪀','🎯','🧩','🤖','🎨','🦄','🪁'],
+    brands:['PlayMax','LEGO','Hasbro','Mattel','Fisher-Price','Hot Wheels','Funko','Melissa','Crayola','VTech'],
+    priceBase:8, priceRange:100,
+    items:[
+      'Building Blocks 500pc Set','Remote Control Stunt Car 2.4G','Family Board Game Edition',
+      'Giant Plush Teddy Bear 60cm','STEM Science Experiment Kit','Jigsaw Puzzle 1000pc Scenic',
+      'Superhero Action Figure 12"','Slime Making Lab Kit','Mini Drone with HD Camera',
+      'Magnetic Drawing Doodle Board','Speed Cube 3x3 Competition','Kids Karaoke Microphone BT',
+      'Play-Doh Ultimate Activity Set','Strategy Card Game 2-6 Players','Super Soaker Water Gun Pair',
+      'Robot Coding Kit Age 8+','Wooden Dollhouse Furnished','Automatic Bubble Machine',
+      'Nerf Elite Blaster & Darts','Beginner Magic Tricks Kit 30pc','Professional Yo-Yo Bearing',
+      'Marble Run 150pc Construction','Interactive Fingerling Monkey','Giant Coloring Book 300 Pages',
+      'Beginner Telescope 70mm','Long Range Walkie Talkie Pair','Kids Play Tent Castle Indoor',
+      'Kinetic Moon Sand Refill 1kg','Jenga Classic Wooden Tower','Color LED Fidget Spinner'
+    ]
+  },
+  {
+    id:'Sports', icon:'⚽',
+    bg:'#1a2025',
+    emojis:['⚽','🏀','🎾','🧘','🏋️','🚴','🏊','🥊','⛷️','🏌️'],
+    brands:['SportFlex','Nike','Adidas','Under Armour','Wilson','Reebok','Asics','New Balance','Callaway','Speedo'],
+    priceBase:12, priceRange:200,
+    items:[
+      'Premium Non-Slip Yoga Mat 6mm','Resistance Bands Set 5 Levels','Cushioned Running Shoes',
+      'Adjustable Dumbbell Set 5-52lb','Speed Jump Rope Ball Bearings','GPS Fitness Tracker Watch',
+      'Insulated Water Bottle 1L Steel','Padded Gym Weight Lifting Gloves','High-Density Foam Roller 36"',
+      'Tennis Racket Beginner Set','Official Size 5 Soccer Ball','All-Surface Basketball Size 7',
+      'Anti-Fog UV Swim Goggles','Lightweight Cycling Helmet','Pro Boxing Gloves 12oz Leather',
+      'Hiking Backpack 40L Waterproof','Complete Skateboard Maple Deck','Junior Golf Club Set 12pc',
+      'Badminton Racket Pair & Shuttle','2-Person Waterproof Camping Tent','Telescopic Fishing Rod 2.1m',
+      'Compression Knee Support Sleeve','Sweatband Headband Set 6pc','Pilates Exercise Ring 15"',
+      '1kg Ankle Weights Pair','Inflatable Punching Speed Bag','Carbon Fiber Kayak Paddle',
+      'Ski & Snowboard Goggles UV400','English Willow Cricket Bat','Recurve Archery Bow Starter'
+    ]
+  }
+];
+
+// ── Generate products ──
+let PRODUCTS = [];
+let idCounter = 1;
+CATEGORIES.forEach(cat => {
+  cat.items.forEach((name, i) => {
+    const price = parseFloat((cat.priceBase + Math.random() * cat.priceRange).toFixed(2));
+    const discount = Math.random() > 0.55 ? Math.floor(Math.random() * 35 + 10) : 0;
+    const oldPrice = discount ? parseFloat((price * (1 + discount/100)).toFixed(2)) : null;
+    const rating = parseFloat((3.4 + Math.random() * 1.6).toFixed(1));
+    PRODUCTS.push({
+      id: idCounter++,
+      name,
+      category: cat.id,
+      emoji: cat.emojis[i % cat.emojis.length],
+      bg: cat.bg,
+      brand: cat.brands[i % cat.brands.length],
+      price,
+      oldPrice,
+      discount,
+      rating,
+      reviews: Math.floor(Math.random() * 800 + 15),
+      isNew: Math.random() > 0.78,
+      isSale: discount > 0,
+      createdAt: Date.now() - Math.floor(Math.random() * 9e7)
+    });
+  });
+});
+
+// ── State ──
+let state = {
+  category: 'all',
+  query: '',
+  sort: 'popular',
+  minPrice: null,
+  maxPrice: null,
+  cart: [],
+  wishlist: new Set()
+};
+
+// ══════════════════════════════════════════
+// RENDER
+// ══════════════════════════════════════════
+function getFiltered() {
+  let items = [...PRODUCTS];
+  if (state.category !== 'all') items = items.filter(p => p.category === state.category);
+  if (state.query) {
+    const q = state.query.toLowerCase();
+    items = items.filter(p =>
+      p.name.toLowerCase().includes(q) ||
+      p.brand.toLowerCase().includes(q) ||
+      p.category.toLowerCase().includes(q)
+    );
+  }
+  if (state.minPrice !== null) items = items.filter(p => p.price >= state.minPrice);
+  if (state.maxPrice !== null) items = items.filter(p => p.price <= state.maxPrice);
+  switch(state.sort) {
+    case 'popular': items.sort((a,b) => b.reviews - a.reviews); break;
+    case 'low': items.sort((a,b) => a.price - b.price); break;
+    case 'high': items.sort((a,b) => b.price - a.price); break;
+    case 'rating': items.sort((a,b) => b.rating - a.rating); break;
+    case 'new': items.sort((a,b) => b.createdAt - a.createdAt); break;
+  }
+  return items;
+}
+
+function starsHtml(rating) {
+  const full = Math.floor(rating);
+  const half = rating - full >= 0.5;
+  let s = '★'.repeat(full);
+  if (half) s += '½';
+  return s;
+}
+
+function renderGrid() {
+  const items = getFiltered();
+  const grid = document.getElementById('productGrid');
+  document.getElementById('resultNum').textContent = items.length;
+
+  // --- VULNERABLE SECTION START ---
+  // We are injecting the search query directly into the HTML 
+  // without using the escHtml() function.
+  const statusArea = document.querySelector('.result-text');
+  if (state.query) {
+    statusArea.innerHTML = `Searching for: <strong>${state.query}</strong>`;
+  } else {
+    statusArea.innerHTML = `<strong>${items.length}</strong> products found`;
+  }
+  // --- VULNERABLE SECTION END ---
+
+  if (!items.length) {
+    grid.innerHTML = `<div class="empty"><div class="e-icon">🔍</div><h3>No products found</h3><p>Try adjusting your search or filters.</p></div>`;
+    return;
+  }
+
+  grid.innerHTML = items.map(p => {
+    const wished = state.wishlist.has(p.id);
+    return `
+    <div class="product-card" data-id="${p.id}">
+      <div class="card-img" style="background:${p.bg}">
+        <div class="card-badges">
+          ${p.isSale ? `<span class="badge-sale">-${p.discount}%</span>` : ''}
+          ${p.isNew ? `<span class="badge-new">NEW</span>` : ''}
+        </div>
+        <span style="transition:transform .3s">${p.emoji}</span>
+      </div>
+      <div class="card-body">
+        <span class="card-brand">${escHtml(p.brand)}</span>
+        <h4 class="card-name" title="${escHtml(p.name)}">${escHtml(p.name)}</h4>
+        <div class="card-rating">
+          <span class="stars">${starsHtml(p.rating)}</span>
+          <span>${p.rating} (${p.reviews})</span>
+        </div>
+        <div class="card-price">
+          <span class="price-now">$${p.price.toFixed(2)}</span>
+          ${p.oldPrice ? `<span class="price-old">$${p.oldPrice.toFixed(2)}</span>` : ''}
+        </div>
+      </div>
+      <div class="card-actions">
+        <button class="add-btn" onclick="addToCart(${p.id},event)">Add to Cart</button>
+        <button class="wish-btn ${wished ? 'wished' : ''}" onclick="toggleWish(${p.id},event)" title="Wishlist">${wished ? '♥' : '♡'}</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// Escape HTML to prevent any injection in rendering
+function escHtml(str) {
+  return String(str)
+    .replace(/&/g,'&amp;')
+    .replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;')
+    .replace(/'/g,'&#39;');
+}
+
+// ══════════════════════════════════════════
+// CATEGORY / SORT / SEARCH / PRICE
+// ══════════════════════════════════════════
+function setCategory(cat, el) {
+  state.category = cat;
+  state.query = '';
+  document.getElementById('searchInput').value = '';
+  document.querySelectorAll('.cat-item').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+  renderGrid();
+}
+
+function setSort(type, el) {
+  state.sort = type;
+  document.querySelectorAll('.sort-chip').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+  renderGrid();
+}
+
+function handleSearch() {
+  state.query = document.getElementById('searchInput').value.trim();
+  state.category = 'all';
+  document.querySelectorAll('.cat-item').forEach(c => c.classList.remove('active'));
+  document.querySelector('[data-cat="all"]').classList.add('active');
+  renderGrid();
+}
+
+function applyPrice() {
+  const min = parseFloat(document.getElementById('minPrice').value);
+  const max = parseFloat(document.getElementById('maxPrice').value);
+  state.minPrice = isNaN(min) ? null : min;
+  state.maxPrice = isNaN(max) ? null : max;
+  if (state.minPrice !== null || state.maxPrice !== null) {
+    showToast(`Price filter applied: $${state.minPrice||0} – $${state.maxPrice||'∞'}`, 'info');
+  }
+  renderGrid();
+}
+
+function resetAll() {
+  state = {...state, category:'all', query:'', sort:'popular', minPrice:null, maxPrice:null};
+  document.getElementById('searchInput').value = '';
+  document.getElementById('minPrice').value = '';
+  document.getElementById('maxPrice').value = '';
+  document.querySelectorAll('.cat-item').forEach(c => c.classList.remove('active'));
+  document.querySelector('[data-cat="all"]').classList.add('active');
+  document.querySelectorAll('.sort-chip').forEach(c => c.classList.remove('active'));
+  document.getElementById('sort-popular').classList.add('active');
+  renderGrid();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+// ══════════════════════════════════════════
+// CART
+// ══════════════════════════════════════════
+function addToCart(id, e) {
+  e && e.stopPropagation();
+  const p = PRODUCTS.find(x => x.id === id);
+  if (!p) return;
+  const existing = state.cart.find(x => x.id === id);
+  if (existing) {
+    existing.qty++;
+  } else {
+    state.cart.push({...p, qty:1});
+  }
+  updateCartBadge();
+  showToast(`"${p.name.substring(0,30)}…" added to cart`, 'success');
+  const btn = document.getElementById('cartBtn');
+  if (btn) { btn.style.transform='scale(1.3)'; setTimeout(()=>{btn.style.transform=''},200); }
+  if (document.getElementById('cartOverlay').style.display !== 'none') renderCartDrawer();
+}
+
+function updateCartBadge() {
+  const total = state.cart.reduce((s,i) => s+i.qty, 0);
+  const badge = document.getElementById('cartBadge');
+  badge.textContent = total;
+  badge.style.display = total ? 'flex' : 'none';
+  document.getElementById('cartItemCount').textContent = total;
+}
+
+function openCart() {
+  document.getElementById('cartOverlay').style.display = 'block';
+  renderCartDrawer();
+}
+
+function closeCart() {
+  document.getElementById('cartOverlay').style.display = 'none';
+}
+
+function renderCartDrawer() {
+  const el = document.getElementById('cartItems');
+  const footer = document.getElementById('cartFooter');
+  if (!state.cart.length) {
+    el.innerHTML = `<div class="cart-empty"><div class="ce-icon">🛒</div><p>Your cart is empty</p></div>`;
+    footer.style.display = 'none';
+    return;
+  }
+  footer.style.display = 'block';
+  el.innerHTML = state.cart.map(item => `
+    <div class="cart-item">
+      <div class="ci-emoji">${item.emoji}</div>
+      <div class="ci-info">
+        <div class="ci-name">${escHtml(item.name)}</div>
+        <div class="ci-brand">${escHtml(item.brand)} × ${item.qty}</div>
+        <div class="ci-price">$${(item.price * item.qty).toFixed(2)}</div>
+      </div>
+      <button class="ci-remove" onclick="removeFromCart(${item.id})">✕</button>
+    </div>
+  `).join('');
+  const total = state.cart.reduce((s,i) => s + i.price*i.qty, 0);
+  document.getElementById('cartTotal').textContent = '$' + total.toFixed(2);
+}
+
+function removeFromCart(id) {
+  state.cart = state.cart.filter(x => x.id !== id);
+  updateCartBadge();
+  renderCartDrawer();
+}
+
+// ══════════════════════════════════════════
+// WISHLIST
+// ══════════════════════════════════════════
+function toggleWish(id, e) {
+  e && e.stopPropagation();
+  if (state.wishlist.has(id)) {
+    state.wishlist.delete(id);
+  } else {
+    state.wishlist.add(id);
+    const p = PRODUCTS.find(x=>x.id===id);
+    showToast(`Added to wishlist!`, 'info');
+  }
+  document.getElementById('wishCount').textContent = state.wishlist.size;
+  renderGrid();
+}
+
+function showWishlist() {
+  if (!state.wishlist.size) { showToast('Your wishlist is empty','info'); return; }
+  showToast(`${state.wishlist.size} item(s) in your wishlist`,'info');
+}
+
+// ══════════════════════════════════════════
+// LOGIN
+// ══════════════════════════════════════════
+function showLogin() {
+  document.getElementById('loginOverlay').style.display = 'flex';
+  setTimeout(() => document.getElementById('loginUser').focus(), 100);
+}
+
+function closeLogin() {
+  document.getElementById('loginOverlay').style.display = 'none';
+  document.getElementById('loginUser').value = '';
+  document.getElementById('loginPass').value = '';
+}
+
+function doLogin() {
+  const u = document.getElementById('loginUser').value.trim();
+  const p = document.getElementById('loginPass').value;
+  if (u === 'admin' && p === '12345678') {
+    closeLogin();
+    showToast('Welcome, Admin! Full access granted.', 'success');
+  } else if (!u || !p) {
+    showToast('Please fill in all fields', 'error');
+  } else {
+    showToast('Invalid credentials. Try admin / 12345678', 'error');
+    document.getElementById('loginPass').value = '';
+    document.getElementById('loginPass').focus();
+  }
+}
+
+// ══════════════════════════════════════════
+// TOAST
+// ══════════════════════════════════════════
+function showToast(msg, type='success') {
+  const wrap = document.getElementById('toastWrap');
+  const el = document.createElement('div');
+  el.className = `toast ${type}`;
+  const icon = type==='success'?'✓':type==='error'?'✕':'ℹ';
+  el.innerHTML = `<span style="font-weight:700">${icon}</span> ${escHtml(msg)}`;
+  wrap.appendChild(el);
+  setTimeout(() => {
+    el.style.animation = 'toastOut .3s ease forwards';
+    setTimeout(() => el.remove(), 300);
+  }, 2500);
+}
+
+// ══════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════
+renderGrid();
+setTimeout(() => document.getElementById('searchInput').focus(), 600);
+</script>
+</body>
+</html>
