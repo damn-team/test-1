@@ -5,7 +5,7 @@ import subprocess
 import sqlite3
 
 def run_user_command(cmd):
-    # ❌ Command Injection vulnerability
+   
     os.system("echo Running command: " + cmd)
     subprocess.call(cmd, shell=True)
 
